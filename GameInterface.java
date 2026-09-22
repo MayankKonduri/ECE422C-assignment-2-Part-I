@@ -5,11 +5,14 @@ import java.util.ArrayList; // so that we can have our history 'memory' data str
 
 public class GameInterface{
 
-    private Mastermind gameObject; // input
+    private GameTemplate gameObject; // input
+
+    // IMPORTANT: right now we are using GameTemplate as the type
+
     private final boolean testMode; // user-defined input (cannot change after inputted)
     private final Scanner sc; // scanner object in order to collect user input
 
-    public GameInterface(Mastermind gameObject, boolean testMode){
+    public GameInterface(GameTemplate gameObject, boolean testMode){
         this.gameObject = gameObject;
         this.testMode = testMode;
         this.sc = new Scanner(System.in); // initializing the scanner object
@@ -30,14 +33,14 @@ public class GameInterface{
 
     private boolean ask_user_to_play_again(){
         System.out.println();
-        System.out.println("Thank you for joining us for a game! Would you like to play another game (Please ONLY Enter 'Y' for Yes)?");
+        System.out.println("Thank you for joining us for a game! Would you like to play another game (Please Enter 'Y' for Yes)?");
     
         if(!sc.hasNextLine()){
             return false;
         }
 
         String user_answer = sc.nextLine();
-        if(user_answer.equals("Y")){
+        if(user_answer.equals("Y") || user_answer.equals("y")){
             return true;
         } else{
             return false;

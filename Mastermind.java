@@ -2,7 +2,7 @@ package assignment2;
 
 import java.util.Random;
 
-public class Mastermind{
+public class Mastermind extends GameTemplate {
 
     // Stores the configuration for this specific game (the user defines what type of game he wants to play in the main file)
     private final GameConfiguration config;
@@ -10,37 +10,30 @@ public class Mastermind{
     // The secret code that the player is trying to guess (this is defined dynamically on instatiation of each object of Mastermind [so each new game])
     private char[] secret_code;
 
-    // Keeps track of whether the player has won or lost (in order to prompt a query to start a new game).
-    private boolean game_won; 
-
     // values from 'GameConfiguration' to set locally for easy retrieval
-
     private final int NUMBER_PEGS;
-
-    private final int MAX_GUESSES;
-    
     private final char[] COLORS_IN_GAME;
 
     // this is like starting 'play game,' as you have defined settings and started to actually play
     public Mastermind(GameConfiguration config) {
         // for easy access, attain values upon instantiation
+
+        super(config.getMaxGuesses()); // parent stores the maximum guesses and win status
+
         NUMBER_PEGS = config.getNumberPegs();
-        MAX_GUESSES = config.getMaxGuesses();
         COLORS_IN_GAME = config.getColors();
 
         this.config = config; // the user tunes the configuration for this mastermind game
         this.secret_code = randomCode(); // upon instantation of game object, a secret code is created randomly
-        this.game_won = false; // keep track whether this game object is live or not 
     }
 
-    // to start a new game, we don't have to make a new object... we just use same game config, and generate a new code and reset in-game stats
-    public void startNewGame(){
-        secret_code = randomCode(); // generate new code
-        game_won = false; // reset game
-    }
+    
+    // ---------- OVERRIDING METHODS ----------
 
     // Generates a random secret code using the colors allowed by this game configuration
-    private char[] randomCode(){
+    // specific to Mastermind, (randomCode() or this logic is specific to Mastermind, but other games might still have a secret code, so they can implement their own randomCode() method) -> but still overridden for polymorphism...
+    @Override
+    public char[] randomCode(){
         Random r = new Random(); // creates a new random object to help generate random values (using methods)
         char[] generating_secret_code = new char[NUMBER_PEGS];
 
@@ -52,19 +45,29 @@ public class Mastermind{
         return generating_secret_code;
     }
 
-    // Returns the maximum number of guesses allowed for this game (so the main program can let users know how many guesses they used out of totally available)
-    public int getMaxGuesses(){
-        return MAX_GUESSES;
+    // to start a new game, we don't have to make a new object... we just use same game config, and generate a new code and reset in-game stats
+    @Override 
+    public void startNewGame(){
+        super.startNewGame(); // reset the parent class's game_won status (if we want to keep what the parent class has, as all game types start with win is false, and then we can add along)
+        secret_code = randomCode(); // generate new code
     }
 
     // Returns the instructions for the current Mastermind game object (the main can print this to the users so they know what configs they are playing under)
+    @Override
     public String getInstructions(){
         return "Guess the " + NUMBER_PEGS+ "-peg secret code using the colors {" + new String(COLORS_IN_GAME)+ "}. Colors can repeat."; // JAVA said to convert char array to String
     }
 
     // before we can validate, we can quickly check whether the guess was valid
     // We return a String because invalid user input is expected and should let the player try again, whereas invalid configuration should throw an error because it is a programming/setup mistake.
+    @Override 
     public String validateGuess(String user_input){
+
+        // Empty input is not a valid Mastermind guess, but this is not in parent class as empty input might be 'skip' in another game
+        if(user_input.isEmpty()){
+            return "Please Try Again. Reason: Your guess cannot be empty.";
+        }
+
         // first check is making sure that the user's input is the same length as the secret code (if not, automatically false)
         if(user_input.length() != NUMBER_PEGS){
             return "Please Try Again. Reason: Guess must contain exactly " + NUMBER_PEGS + " colors.";
@@ -84,23 +87,20 @@ public class Mastermind{
     }
 
     // I was debating to let validateGuess call this, but that would interfere with the fact that "invalid guesses do not consume an attempt"
+    @Override
     public String scoreGuess(String user_input){
         Feedback f = new Feedback(secret_code, user_input); // char[] and String as inputs
 
         if(f.getBlackPegs() == NUMBER_PEGS){
             // Game Won!
-            game_won = true;
+            setWon(true); // set the parent class's game_won status to true, as the user has guessed the entire code correctly
         }
 
         return f.toString(); // overriding the toString() method inherited from Object Class to return a custom String
     }
 
-    // (Encapsulation) Returns whether the player has won the current game (so main can prompt asking for a new game if needed)
-    public boolean isWon(){
-        return game_won;
-    }
-    
     // A testing mode must make it possible to reveal or deterministically control the secret for testing.
+    @Override 
     public String getSecretCode(){
         return new String(secret_code); // convert char[] to String
     }
