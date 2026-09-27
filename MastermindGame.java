@@ -2,20 +2,17 @@ package assignment2;
 
 import java.util.Random;
 
-public class Mastermind extends GameTemplate {
+public class MastermindGame extends GameTemplate {
 
     // Stores the configuration for this specific game (the user defines what type of game he wants to play in the main file)
-    private final GameConfiguration config;
-
-    // The secret code that the player is trying to guess (this is defined dynamically on instatiation of each object of Mastermind [so each new game])
-    private char[] secret_code;
+    private final MastermindConfiguration config;
 
     // values from 'GameConfiguration' to set locally for easy retrieval
     private final int NUMBER_PEGS;
     private final char[] COLORS_IN_GAME;
 
     // this is like starting 'play game,' as you have defined settings and started to actually play
-    public Mastermind(GameConfiguration config) {
+    public MastermindGame(MastermindConfiguration config) {
         // for easy access, attain values upon instantiation
 
         super(config.getMaxGuesses()); // parent stores the maximum guesses and win status
@@ -24,7 +21,7 @@ public class Mastermind extends GameTemplate {
         COLORS_IN_GAME = config.getColors();
 
         this.config = config; // the user tunes the configuration for this mastermind game
-        this.secret_code = randomCode(); // upon instantation of game object, a secret code is created randomly
+        this.secret_word = randomCode(); // upon instantation of game object, a secret code is created randomly
     }
 
     
@@ -43,13 +40,6 @@ public class Mastermind extends GameTemplate {
         }
 
         return generating_secret_code;
-    }
-
-    // to start a new game, we don't have to make a new object... we just use same game config, and generate a new code and reset in-game stats
-    @Override 
-    public void startNewGame(){
-        super.startNewGame(); // reset the parent class's game_won status (if we want to keep what the parent class has, as all game types start with win is false, and then we can add along)
-        secret_code = randomCode(); // generate new code
     }
 
     // Returns the instructions for the current Mastermind game object (the main can print this to the users so they know what configs they are playing under)
@@ -89,20 +79,13 @@ public class Mastermind extends GameTemplate {
     // I was debating to let validateGuess call this, but that would interfere with the fact that "invalid guesses do not consume an attempt"
     @Override
     public String scoreGuess(String user_input){
-        Feedback f = new Feedback(secret_code, user_input); // char[] and String as inputs
+        MastermindFeedback f = new MastermindFeedback(secret_word, user_input); // char[] and String as inputs
 
-        if(f.getBlackPegs() == NUMBER_PEGS){
+        if(f.getCorrectLetters() == NUMBER_PEGS){
             // Game Won!
             setWon(true); // set the parent class's game_won status to true, as the user has guessed the entire code correctly
         }
 
         return f.toString(); // overriding the toString() method inherited from Object Class to return a custom String
     }
-
-    // A testing mode must make it possible to reveal or deterministically control the secret for testing.
-    @Override 
-    public String getSecretCode(){
-        return new String(secret_code); // convert char[] to String
-    }
-
 }

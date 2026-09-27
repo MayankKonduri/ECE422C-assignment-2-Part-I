@@ -1,6 +1,6 @@
 package assignment2;
 
-public class GameConfiguration{
+public class MastermindConfiguration{
 
     // STATIC as these are the default that all the objects get and can default to
 
@@ -20,13 +20,13 @@ public class GameConfiguration{
     private final char[] COLORS_IN_GAME;
 
     // DEFAULT CONSTRUCTOR which creates a default Mastermind game as per instruction sheet specs.
-    public GameConfiguration() {
+    public MastermindConfiguration() {
         this.NUMBER_PEGS = DEFAULT_NUMBER_PEGS;
         this.MAX_GUESSES = DEFAULT_MAX_GUESSES;
         this.COLORS_IN_GAME = DEFAULT_COLORS.clone();
     }
 
-    public GameConfiguration(int NUMBER_PEGS, int MAX_GUESSES, char[] COLORS_IN_GAME){
+    public MastermindConfiguration(int NUMBER_PEGS, int MAX_GUESSES, char[] COLORS_IN_GAME){
         if(NUMBER_PEGS < 1){
             throw new IllegalArgumentException("Need at least 1 peg"); // tell user the code must have atleast 1 peg to guess
         } else{
