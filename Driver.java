@@ -43,7 +43,7 @@ public class Driver{
             } else {
                 System.out.println("Launching Wordle Game [Test Mode: " + testMode + "]...");
                 // Example of polymorphism, as we are declaring as a GameTemplate type, but the actual object is a Mastermind type (so we can use the parent class's methods, but the child class's methods will override them since that is the reference or dynamic binding)
-                game = new WordleGame(new WordleConfiguration()); // begin a new game object, or an actual game instance with the default configs
+                game = new WordleGame(new WordleConfiguration(6, 6, "assignment2/Dictionary.txt")); // begin a new game object, or an actual game instance with the default configs
             }
             
             GameInterface g_Interface = new GameInterface(game, testMode);
